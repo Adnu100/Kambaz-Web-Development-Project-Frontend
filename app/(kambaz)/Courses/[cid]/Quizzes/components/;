@@ -256,20 +256,6 @@ export default function QuizDetails() {
 
           <div className="row mt-2">
             <div className="col-9">
-              <b>Webcam Required</b>
-            </div>
-            <div className="col-3">{quiz.webcam ? "Yes" : "No"}</div>
-          </div>
-
-          <div className="row mt-2">
-            <div className="col-9">
-              <b>Lock Question After Answering</b>
-            </div>
-            <div className="col-3">{quiz.lockQafterA ? "Yes" : "No"}</div>
-          </div>
-
-          <div className="row mt-2">
-            <div className="col-9">
               <b>One Question at a Time</b>
             </div>
             <div className="col-3">{quiz.oneQaTime ? "Yes" : "No"}</div>

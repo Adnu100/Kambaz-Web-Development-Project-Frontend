@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSelector } from "react-redux";
 import { Button, Form, Nav, Tab, Row, Col } from "react-bootstrap";
 import * as quizClient from "../client";
 
 export default function QuizDetailsEditor() {
   const { cid, qid } = useParams();
   const router = useRouter();
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-  
+
   const [quiz, setQuiz] = useState({
     _id: "test",
     course: "default",
@@ -36,23 +34,25 @@ export default function QuizDetailsEditor() {
     lockQafterA: false,
     accessCode: "",
     maxAttempts: 1,
-    for: "Everyone"
+    for: "Everyone",
   });
 
-  const [questions, setQuestions] = useState([{
-    _id: "test",
-    points: 0,
-    text: "test",
-    options: [],
-    answer: [],
-    type: "MULTIPLECHOICE"
-  }]);
+  const [questions, setQuestions] = useState([
+    {
+      _id: "test",
+      points: 0,
+      text: "test",
+      options: [],
+      answer: [],
+      type: "MULTIPLECHOICE",
+    },
+  ]);
 
   const getQuiz = async () => {
     if (qid) {
       try {
         const fetchedQuiz = await quizClient.findQuizById(cid, qid);
-        setQuiz({...quiz, ...fetchedQuiz});
+        setQuiz({ ...quiz, ...fetchedQuiz });
       } catch (error) {
         console.error("Error fetching quiz:", error);
       }
@@ -68,20 +68,24 @@ export default function QuizDetailsEditor() {
         console.error("Error fetching quiz questions:", error);
       }
     }
-  }
+  };
 
   useEffect(() => {
     getQuiz();
     getQuizQuestions();
   }, [qid, cid]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    
+
     setQuiz({
       ...quiz,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -94,21 +98,24 @@ export default function QuizDetailsEditor() {
     }
   };
 
-  const publishQuiz = async() => {
+  const publishQuiz = async () => {
     const status = await quizClient.publishQuiz(quiz.course, quiz._id, quiz);
     if (status === 200) {
-      setQuiz({...quiz, published: true});
+      setQuiz({ ...quiz, published: true });
     } else {
       console.error("Failed to publish quiz");
     }
-  }
+  };
 
   const handleCancel = () => {
     router.back();
   };
 
   const calculateTotalPoints = () => {
-    const total = questions.reduce((total, question) => total + (question.points || 0), 0);
+    const total = questions.reduce(
+      (total, question) => total + (question.points || 0),
+      0
+    );
     return total;
   };
 
@@ -122,7 +129,7 @@ export default function QuizDetailsEditor() {
             label="Published"
             checked={quiz.published}
             disabled={true}
-            onChange={(e) => setQuiz({...quiz, published: e.target.checked})}
+            onChange={(e) => setQuiz({ ...quiz, published: e.target.checked })}
             className="d-inline-block ms-2"
           />
         </div>
@@ -137,7 +144,10 @@ export default function QuizDetailsEditor() {
             <Nav.Link eventKey="details">Details</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link as={Link} href={`/Courses/${cid}/Quizzes/${qid}/questions`}>
+            <Nav.Link
+              as={Link}
+              href={`/Courses/${cid}/Quizzes/${qid}/questions`}
+            >
               Questions
             </Nav.Link>
           </Nav.Item>
@@ -170,7 +180,11 @@ export default function QuizDetailsEditor() {
               <Row className="mb-3">
                 <Form.Group as={Col} md={4}>
                   <Form.Label>Quiz Type</Form.Label>
-                  <Form.Select name="type" value={quiz.type} onChange={handleChange}>
+                  <Form.Select
+                    name="type"
+                    value={quiz.type}
+                    onChange={handleChange}
+                  >
                     <option value="GRADEDQUIZ">Graded Quiz</option>
                     <option value="PRACTICEQUIZ">Practice Quiz</option>
                     <option value="GRADEDSURVEY">Graded Survey</option>
@@ -180,7 +194,11 @@ export default function QuizDetailsEditor() {
 
                 <Form.Group as={Col} md={8}>
                   <Form.Label>Assignment Group</Form.Label>
-                  <Form.Select name="assignmentGroup" value={quiz.assignmentGroup} onChange={handleChange}>
+                  <Form.Select
+                    name="assignmentGroup"
+                    value={quiz.assignmentGroup}
+                    onChange={handleChange}
+                  >
                     <option value="ASSIGNMENTS">ASSIGNMENTS</option>
                     <option value="QUIZZES">QUIZZES</option>
                     <option value="EXAMS">EXAMS</option>
@@ -208,7 +226,9 @@ export default function QuizDetailsEditor() {
                     id="time-limit"
                     label="Time Limit"
                     checked={quiz.timeLmt > 0}
-                    onChange={(e) => setQuiz({...quiz, timeLmt: e.target.checked ? 20 : 0})}
+                    onChange={(e) =>
+                      setQuiz({ ...quiz, timeLmt: e.target.checked ? 20 : 0 })
+                    }
                     className="me-2"
                   />
                   {quiz.timeLmt > 0 && (
@@ -216,7 +236,7 @@ export default function QuizDetailsEditor() {
                       <Form.Control
                         type="number"
                         size="sm"
-                        style={{width: "80px"}}
+                        style={{ width: "80px" }}
                         value={quiz.timeLmt}
                         name="timeLmt"
                         onChange={handleChange}
@@ -227,8 +247,9 @@ export default function QuizDetailsEditor() {
                   )}
                 </Form.Group>
 
-                <Form.Group className="mb-2">
+                <Form.Group className="mb-2 d-flex align-items-center">
                   <Form.Check
+                    className="me-2"
                     type="checkbox"
                     id="multiple-attempts"
                     label="Allow Multiple Attempts"
@@ -236,6 +257,20 @@ export default function QuizDetailsEditor() {
                     checked={quiz.multipleAttempts}
                     onChange={handleChange}
                   />
+                  {quiz.multipleAttempts && (
+                    <>
+                      <Form.Control
+                        type="number"
+                        size="sm"
+                        style={{ width: "80px" }}
+                        value={quiz.maxAttempts}
+                        name="maxAttempts"
+                        onChange={handleChange}
+                        min="1"
+                      />
+                      <span className="ms-2">Attempts</span>
+                    </>
+                  )}
                 </Form.Group>
 
                 <Form.Group className="mb-2">
@@ -245,6 +280,28 @@ export default function QuizDetailsEditor() {
                     label="Show Correct Answers"
                     name="showCorrectAnswers"
                     checked={quiz.showCorrectAnswers}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-2">
+                  <Form.Check
+                    type="checkbox"
+                    id="webcamRequired"
+                    label="Webcam Required"
+                    name="webcam"
+                    checked={quiz.webcam}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-2">
+                  <Form.Check
+                    type="checkbox"
+                    id="lockQs"
+                    label="Lock Questions after Answering"
+                    name="lockQafterA"
+                    checked={quiz.lockQafterA}
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -284,16 +341,24 @@ export default function QuizDetailsEditor() {
               </div>
 
               <div className="d-flex justify-content-end border-top pt-3">
-                <Button variant="outline-secondary" className="me-2" onClick={handleCancel}>
+                <Button
+                  variant="outline-secondary"
+                  className="me-2"
+                  onClick={handleCancel}
+                >
                   Cancel
                 </Button>
                 <Button variant="danger" onClick={() => handleSave(cid, qid)}>
                   Save
                 </Button>
-                <Button variant="danger" className="ms-2" onClick={() => {
-                  publishQuiz();
-                  handleSave(cid, qid);
-                }}>
+                <Button
+                  variant="danger"
+                  className="ms-2"
+                  onClick={() => {
+                    publishQuiz();
+                    handleSave(cid, qid);
+                  }}
+                >
                   Save and Publish
                 </Button>
               </div>
@@ -304,3 +369,4 @@ export default function QuizDetailsEditor() {
     </div>
   );
 }
+

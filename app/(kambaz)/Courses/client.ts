@@ -3,7 +3,8 @@
 import axios from "axios";
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
-const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
+const HTTP_SERVER =
+  process.env.NEXT_PUBLIC_HTTP_SERVER || "http://localhost:4000";
 
 const COURSES_API = `${HTTP_SERVER}/api/courses`;
 const USERS_API = `${HTTP_SERVER}/api/users`;
@@ -15,12 +16,17 @@ export const fetchAllCourses = async () => {
 };
 
 export const findMyCourses = async () => {
-  const { data } = await axiosWithCredentials.get(`${USERS_API}/current/courses`);
+  const { data } = await axiosWithCredentials.get(
+    `${USERS_API}/current/courses`
+  );
   return data;
 };
 
 export const createCourse = async (course: any) => {
-  const { data } = await axiosWithCredentials.post(`${USERS_API}/current/courses`, course);
+  const { data } = await axiosWithCredentials.post(
+    `${USERS_API}/current/courses`,
+    course
+  );
   return data;
 };
 
@@ -49,38 +55,42 @@ export const createModuleForCourse = async (courseId: string, module: any) => {
 
 const MODULES_API = `${HTTP_SERVER}/api/modules`;
 export const deleteModule = async (courseId: string, moduleId: string) => {
-  const response = await axios.delete(`${COURSES_API}/${courseId}/modules/${moduleId}`);
+  const response = await axios.delete(
+    `${COURSES_API}/${courseId}/modules/${moduleId}`
+  );
   return response.data;
 };
 
-export const updateModule = async (courseId: string,module: any) => {
-    const { data } = await axios.put( `${COURSES_API}/${courseId}/modules/${module._id}`, module);
-    return data;
-  };
-  
+export const updateModule = async (courseId: string, module: any) => {
+  const { data } = await axios.put(
+    `${COURSES_API}/${courseId}/modules/${module._id}`,
+    module
+  );
+  return data;
+};
 
-
-// ENROLLMENT-RELATED FUNCTIONS 
+// ENROLLMENT-RELATED FUNCTIONS
 
 export const findEnrollmentsForUser = async (userId: string) => {
-  const { data } = await axiosWithCredentials.get(`${USERS_API}/${userId}/enrollments`);
+  const { data } = await axiosWithCredentials.get(
+    `${USERS_API}/${userId}/enrollments`
+  );
   return data;
 };
 
 export const enrollInCourse = async (userId: string, courseId: string) => {
   const response = await axiosWithCredentials.post(
-    `${USERS_API}/${userId}/courses/${courseId}`  // Match  route pattern
+    `${USERS_API}/${userId}/courses/${courseId}` // Match  route pattern
   );
   return response.data;
 };
 
 export const unenrollFromCourse = async (userId: string, courseId: string) => {
   const response = await axiosWithCredentials.delete(
-    `${USERS_API}/${userId}/courses/${courseId}`  // Match  route pattern
+    `${USERS_API}/${userId}/courses/${courseId}` // Match  route pattern
   );
   return response.data;
 };
-
 
 // ASSIGNMENT FUNCTIONS
 const ASSIGNMENTS_API = `${HTTP_SERVER}/api/assignments`;
@@ -90,7 +100,10 @@ export const findAssignmentsForCourse = async (courseId: string) => {
   return response.data;
 };
 
-export const createAssignmentForCourse = async (courseId: string, assignment: any) => {
+export const createAssignmentForCourse = async (
+  courseId: string,
+  assignment: any
+) => {
   const response = await axios.post(
     `${COURSES_API}/${courseId}/assignments`,
     assignment
@@ -128,7 +141,9 @@ export const createQuizForCourse = async (courseId: string, quiz: any) => {
 };
 
 export const deleteQuiz = async (quizId: string) => {
-  const response = await axiosWithCredentials.delete(`${QUIZZES_API}/${quizId}`);
+  const response = await axiosWithCredentials.delete(
+    `${QUIZZES_API}/${quizId}`
+  );
   return response.data;
 };
 
@@ -154,7 +169,9 @@ export const submitQuiz = async (quizId: string, answers: any) => {
 };
 
 export const getQuizGrade = async (quizId: string) => {
-  const response = await axiosWithCredentials.get(`${QUIZZES_API}/${quizId}/grade`);
+  const response = await axiosWithCredentials.get(
+    `${QUIZZES_API}/${quizId}/grade`
+  );
   return response.data;
 };
 
@@ -162,3 +179,4 @@ export const findUsersForCourse = async (courseId: string) => {
   const response = await axios.get(`${COURSES_API}/${courseId}/users`);
   return response.data;
 };
+

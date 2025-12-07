@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSelector } from "react-redux";
 import { Button, Nav, Tab, Container, Alert, Form } from "react-bootstrap";
 import * as quizClient from "../client";
 import QuestionEditor from "../QuestionEditor";
@@ -37,33 +36,40 @@ export interface FillInBlankQuestion extends BaseQuestion {
   correctAnswer: string;
 }
 
-export type Question = MultipleChoiceQuestion | TrueFalseQuestion | FillInBlankQuestion;
+export type Question =
+  | MultipleChoiceQuestion
+  | TrueFalseQuestion
+  | FillInBlankQuestion;
 
 export default function QuizQuestionsEditor() {
   const { cid, qid } = useParams();
   const router = useRouter();
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const [saveStatus, setSaveStatus] = useState<{ type: string; message: string } | null>(null);
-  const [newQuestionType, setNewQuestionType] = useState<string>("MULTIPLE_CHOICE");
+  const [saveStatus, setSaveStatus] = useState<{
+    type: string;
+    message: string;
+  } | null>(null);
+  const [newQuestionType, setNewQuestionType] =
+    useState<string>("MULTIPLE_CHOICE");
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [quiz, setQuiz] = useState<any>({});
 
   const getQuiz = async () => {
     if (qid && cid) {
       try {
-        const fetchedQuiz = await quizClient.findQuizById(cid, qid);
-        const fetchedQuizQuestions = await quizClient.getQuestionsForQuiz(cid, qid);
-        const formattedQuestions = fetchedQuizQuestions.length > 0 ? fetchedQuizQuestions.map(
-          (q: any) => ({...q, isEditing: false})
-        ) : [];
+        const fetchedQuizQuestions = await quizClient.getQuestionsForQuiz(
+          cid,
+          qid
+        );
+        const formattedQuestions =
+          fetchedQuizQuestions.length > 0
+            ? fetchedQuizQuestions.map((q: any) => ({ ...q, isEditing: false }))
+            : [];
 
-        setQuiz(fetchedQuiz);
         setQuestions(formattedQuestions);
       } catch (error) {
         console.error("Error fetching quiz:", error);
         setSaveStatus({
           type: "danger",
-          message: "Error loading quiz questions."
+          message: "Error loading quiz questions.",
         });
       }
     }
@@ -75,7 +81,7 @@ export default function QuizQuestionsEditor() {
 
   const handleAddQuestion = async () => {
     let newQuestion: Question;
-    
+
     if (newQuestionType === "MULTIPLE_CHOICE") {
       newQuestion = {
         type: "MULTIPLE_CHOICE",
@@ -86,7 +92,7 @@ export default function QuizQuestionsEditor() {
         points: 1,
         isEditing: true,
         options: [""],
-        correctAnswer: ""
+        correctAnswer: "",
       } as MultipleChoiceQuestion;
     } else if (newQuestionType === "TRUE_FALSE") {
       newQuestion = {
@@ -97,7 +103,7 @@ export default function QuizQuestionsEditor() {
         course: cid as string,
         points: 1,
         isEditing: true,
-        correctAnswer: "False"
+        correctAnswer: "False",
       } as TrueFalseQuestion;
     } else {
       newQuestion = {
@@ -108,22 +114,28 @@ export default function QuizQuestionsEditor() {
         course: cid as string,
         points: 1,
         isEditing: true,
-        correctAnswer: ""
+        correctAnswer: "",
       } as FillInBlankQuestion;
     }
-    
-    await quizClient.createQuestion(cid, qid, newQuestion);
+
+    const answer = await quizClient.createQuestion(cid, qid, newQuestion);
+    newQuestion._id = answer.data._id;
     setQuestions([...questions, newQuestion]);
   };
 
-  const handleSaveQuestion = async (questionId: any, updatedQuestion: Question) => {
+  const handleSaveQuestion = async (
+    questionId: any,
+    updatedQuestion: Question
+  ) => {
     updatedQuestion.isEditing = false;
-    const q = questions.map((q) => q._id === questionId ? updatedQuestion : q);
+    const q = questions.map((q) =>
+      q._id === questionId ? updatedQuestion : q
+    );
     setQuestions(q);
     await quizClient.updateQuestion(cid, qid, questionId, updatedQuestion);
     setSaveStatus({
       type: "success",
-      message: "Question updated successfully!"
+      message: "Question updated successfully!",
     });
     setTimeout(() => setSaveStatus(null), 3000);
   };
@@ -150,7 +162,7 @@ export default function QuizQuestionsEditor() {
     await quizClient.deleteQuestion(cid, qid, questionId);
     setSaveStatus({
       type: "warning",
-      message: "Question deleted."
+      message: "Question deleted.",
     });
     setTimeout(() => setSaveStatus(null), 3000);
   };
@@ -164,20 +176,20 @@ export default function QuizQuestionsEditor() {
       if (!cid || !qid) {
         throw new Error("Course ID or Quiz ID is missing");
       }
-      
+
       const originalQuiz = await quizClient.findQuizById(cid, qid);
       const updatedQuiz = {
         ...originalQuiz,
-        points: calculateTotalPoints()
+        points: calculateTotalPoints(),
       };
-      
+
       await quizClient.updateQuiz(cid, qid, updatedQuiz);
-      
+
       setSaveStatus({
         type: "success",
-        message: "Quiz questions saved successfully!"
+        message: "Quiz questions saved successfully!",
       });
-      
+
       setTimeout(() => {
         router.push(`/Courses/${cid}/Quizzes/${qid}/details`);
       }, 1000);
@@ -185,7 +197,7 @@ export default function QuizQuestionsEditor() {
       console.error("Error saving quiz:", error);
       setSaveStatus({
         type: "danger",
-        message: "Error saving quiz questions."
+        message: "Error saving quiz questions.",
       });
     }
   };
@@ -225,7 +237,7 @@ export default function QuizQuestionsEditor() {
           <Tab.Pane eventKey="questions">
             <div className="text-center mb-4">
               <div className="d-flex justify-content-center align-items-center">
-                <Form.Select 
+                <Form.Select
                   value={newQuestionType}
                   onChange={(e) => setNewQuestionType(e.target.value)}
                   className="me-3"
@@ -235,8 +247,8 @@ export default function QuizQuestionsEditor() {
                   <option value="TRUE_FALSE">True/False</option>
                   <option value="FILL_IN_BLANK">Fill in the Blank</option>
                 </Form.Select>
-                <Button 
-                  variant="outline-secondary" 
+                <Button
+                  variant="outline-secondary"
                   className="px-4 py-2"
                   onClick={handleAddQuestion}
                 >
@@ -257,7 +269,9 @@ export default function QuizQuestionsEditor() {
                       <QuestionEditor
                         question={question}
                         onEdit={() => {}}
-                        onSave={(updatedQuestion) => handleSaveQuestion(question._id, updatedQuestion)}
+                        onSave={(updatedQuestion) =>
+                          handleSaveQuestion(question._id, updatedQuestion)
+                        }
                         onCancel={() => handleCancelEdit(question._id)}
                         onDelete={() => handleDeleteQuestion(question._id)}
                       />
@@ -265,21 +279,27 @@ export default function QuizQuestionsEditor() {
                       <div className="question-preview border p-3 rounded">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                           <div>
-                            <span className="badge bg-primary me-2">Question {index + 1}</span>
-                            <span className="badge bg-secondary">{question.points} pts</span>
-                            <span className="ms-2 fw-bold">{question.question}</span>
+                            <span className="badge bg-primary me-2">
+                              Question {index + 1}
+                            </span>
+                            <span className="badge bg-secondary">
+                              {question.points} pts
+                            </span>
+                            <span className="ms-2 fw-bold">
+                              {question.question}
+                            </span>
                           </div>
                           <div className="d-flex align-items-center">
-                            <Button 
-                              variant="outline-primary" 
+                            <Button
+                              variant="outline-primary"
                               size="sm"
                               onClick={() => handleEditQuestion(question._id)}
                             >
                               Edit
                             </Button>
-                            <FaTrash 
-                              className="text-danger ms-2" 
-                              style={{cursor: 'pointer'}}
+                            <FaTrash
+                              className="text-danger ms-2"
+                              style={{ cursor: "pointer" }}
                               onClick={() => handleDeleteQuestion(question._id)}
                             />
                           </div>
@@ -292,10 +312,18 @@ export default function QuizQuestionsEditor() {
             )}
 
             <div className="d-flex justify-content-start mt-4">
-              <Button variant="outline-secondary" className="me-2" onClick={handleCancel}>
+              <Button
+                variant="outline-secondary"
+                className="me-2"
+                onClick={handleCancel}
+              >
                 Cancel
               </Button>
-              <Button variant="danger" onClick={handleSave} disabled={questions.length === 0}>
+              <Button
+                variant="danger"
+                onClick={handleSave}
+                disabled={questions.length === 0}
+              >
                 Save
               </Button>
             </div>
@@ -305,3 +333,4 @@ export default function QuizQuestionsEditor() {
     </Container>
   );
 }
+
