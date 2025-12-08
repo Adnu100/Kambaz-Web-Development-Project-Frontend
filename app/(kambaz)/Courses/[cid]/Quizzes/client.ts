@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 
 const REMOTE_SERVER =
   process.env.NEXT_PUBLIC_HTTP_SERVER || "http://localhost:4000";
+
 const QUIZ_API = `${REMOTE_SERVER}/api`;
 
 const axiosWithCredentials = axios.create({
@@ -130,4 +130,3 @@ export const updateAttempt = async (
   );
   return response.data;
 };
-

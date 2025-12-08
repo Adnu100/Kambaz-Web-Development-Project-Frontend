@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// app/(kambaz)/Courses/client.ts
 import axios from "axios";
+
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
 const HTTP_SERVER =
@@ -179,4 +178,3 @@ export const findUsersForCourse = async (courseId: string) => {
   const response = await axios.get(`${COURSES_API}/${courseId}/users`);
   return response.data;
 };
-
