@@ -1,9 +1,8 @@
-// app/(kambaz)/Account/Signin/page.tsx
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import * as client from "../client";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import { setCurrentUser } from "../reducer";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
@@ -19,9 +18,9 @@ import {
 export default function Signin() {
   const [credentials, setCredentials] = useState<any>({});
   const dispatch = useDispatch();
-  const router = useRouter(); 
+  const router = useRouter();
   const signin = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     const user = await client.signin(credentials);
 
     if (!user) {
@@ -30,7 +29,7 @@ export default function Signin() {
     }
 
     dispatch(setCurrentUser(user));
-    router.push("/Dashboard"); 
+    router.push("/Dashboard");
   };
 
   return (
@@ -42,7 +41,7 @@ export default function Signin() {
             {" "}
             <Form.Group className="mb-3" controlId="wd-username">
               <FormControl
-                value={credentials.username || ""} 
+                value={credentials.username || ""}
                 onChange={(e) =>
                   setCredentials({ ...credentials, username: e.target.value })
                 }
@@ -51,13 +50,13 @@ export default function Signin() {
             </Form.Group>
             <Form.Group className="mb-3" controlId="wd-password">
               <FormControl
-                value={credentials.password || ""} 
+                value={credentials.password || ""}
                 onChange={(e) =>
                   setCredentials({ ...credentials, password: e.target.value })
                 }
                 placeholder="password"
                 type="password"
-              /> 
+              />
             </Form.Group>
             <Button
               id="wd-signin-btn"
@@ -80,3 +79,4 @@ export default function Signin() {
     </Container>
   );
 }
+

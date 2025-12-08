@@ -1,6 +1,5 @@
-// app/(kambaz)/Account/Navigation.tsx
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Nav, NavItem, NavLink } from "react-bootstrap";
@@ -13,7 +12,6 @@ export default function AccountNavigation() {
 
   return (
     <Nav variant="pills" className="flex-column">
-      
       {links.map((link) => {
         const isActive = pathname.endsWith(link.toLowerCase());
         return (
@@ -22,7 +20,9 @@ export default function AccountNavigation() {
               as={Link}
               href={link}
               active={isActive}
-              className={`d-flex align-items-center fw-${isActive ? "bold" : "medium"} 
+              className={`d-flex align-items-center fw-${
+                isActive ? "bold" : "medium"
+              } 
                 text-${isActive ? "dark" : "danger"} ps-2`}
             >
               {isActive && (
@@ -37,14 +37,19 @@ export default function AccountNavigation() {
               )}
               {link}
             </NavLink>
-            
           </NavItem>
         );
       })}
 
-{currentUser && currentUser.role === "ADMIN" && (
-       <NavLink as={Link} href={`/Account/Users`}  active={pathname.endsWith('Users')}> Users </NavLink> )}
-
+      {currentUser && currentUser.role === "ADMIN" && (
+        <NavLink
+          as={Link}
+          href={`/Account/Users`}
+          active={pathname.endsWith("Users")}
+        >
+          Users
+        </NavLink>
+      )}
     </Nav>
   );
 }
