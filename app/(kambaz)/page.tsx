@@ -26,6 +26,29 @@ export default function Kambaz() {
       <hr />
 
       <div className="my-5 text-center">
+        <h2>Link to Github Repositories:</h2>
+        <p className="my-3">
+          <a
+            href="https://github.com/Adnu100/Kambaz-Web-Development-Project-Frontend"
+            target="_blank"
+            className="mx-2 text-blue-500 underline"
+          >
+            Frontend
+          </a>
+        </p>
+        <p className="my-3">
+          <a
+            href="https://github.com/Adnu100/Kambaz-Web-Development-Project-Backend"
+            target="_blank"
+            className="mx-2 text-blue-500 underline"
+          >
+            Backend
+          </a>
+        </p>
+      </div>
+      <hr />
+
+      <div className="my-5 text-center">
         <button className="btn btn-primary" onClick={goToApplication}>
           Go to Kambaz
         </button>
@@ -34,4 +57,3 @@ export default function Kambaz() {
     </div>
   );
 }
-
